@@ -37,6 +37,7 @@ header {
   width: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
 
 .modal-box {
@@ -50,6 +51,7 @@ header {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   animation-name: modalopen;
   animation-duration: var(--modal-duration);
+  cursor: default;
 }
 
 @keyframes modalopen {
