@@ -5,6 +5,12 @@ const app = express();
 
 
 
+// Body parser middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+
+
 app.get('/', function(request, response) {
   response.json({message: 'Welcome to the Random Ideas API'});
 });
