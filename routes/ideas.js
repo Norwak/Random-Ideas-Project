@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 
-const ideas = new Array(
+let ideas = new Array(
   {
     id: 1,
     text: 'Positive NewsLetter, a newsletter that only shares positive, uplifting news',
@@ -47,6 +47,8 @@ router.get('/:id', function(request, response) {
   return response.json({success: true, data: idea});
 });
 
+
+
 // Add an idea
 router.post('/', function(request, response) {
   const idea = {
@@ -60,6 +62,41 @@ router.post('/', function(request, response) {
   ideas.push(idea);
 
   response.json({success: true, data: idea});
+});
+
+
+
+// update an idea
+router.put('/:id', function(request, response) {
+  const targetID = Number(request.params.id);
+  const idea = ideas.find((item) => item.id === targetID);
+
+  if (!idea) {
+    return response.status('400').json({success: false, error: 'Resourse with specified ID not found'});
+  }
+
+  idea.text = request.body.text || idea.text;
+  idea.tag = request.body.tag || idea.tag;
+  idea.date = new Date().toISOString().slice(0, 10);
+
+  return response.json({success: true, data: idea});
+});
+
+
+
+// delete an idea
+router.delete('/:id', function(request, response) {
+  const targetID = Number(request.params.id);
+  const idea = ideas.find((item) => item.id === targetID);
+
+  if (!idea) {
+    return response.status('400').json({success: false, error: 'Resourse with specified ID not found'});
+  }
+
+  const index = ideas.indexOf(idea);
+  ideas.splice(index, 1);
+
+  return response.json({success: true});
 });
 
 
