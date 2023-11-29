@@ -1,102 +1,87 @@
 const express = require('express');
 const router = express.Router();
+const Idea = require('../models/Idea.js');
 
 
 
-let ideas = new Array(
-  {
-    id: 1,
-    text: 'Positive NewsLetter, a newsletter that only shares positive, uplifting news',
-    tag: 'Technology',
-    username: 'TonyStark',
-    date: '2022-01-02',
-  },
-  {
-    id: 2,
-    text: 'Milk cartons that turn a different color the older that your milk is getting',
-    tag: 'Inventions',
-    username: 'SteveRogers',
-    date: '2022-01-02',
-  },
-  {
-    id: 3,
-    text: 'ATM location app which lets you know where the closest ATM is and if it is in service',
-    tag: 'Software',
-    username: 'BruceBanner',
-    date: '2022-01-02',
-  },
-);
+// common error handler
+function errorHandler(response, error) {
+  console.log(error);
+  return response.status(500).json({success: false, error: 'Something went wrong'});
+}
 
 
 
 // get all ideas
-router.get('/', function(request, response) {
-  response.json({success: true, data: ideas});
+router.get('/', async function(request, response) {
+  try {
+    const ideas = await Idea.find();
+    response.json({success: true, data: ideas});
+  } catch (error) {
+    return errorHandler(response, error);
+  }
 });
 
 // get a single idea
-router.get('/:id', function(request, response) {
-  const idea = ideas.find(function(item) {
-    return item.id === Number(request.params.id);
-  });
-
-  if (!idea) {
-    return response.status(404).json({success: false, error: 'Resourse not found'});
+router.get('/:id', async function(request, response) {
+  try {
+    const idea = await Idea.findById(request.params.id);
+    if (!idea) {
+      return response.status(404).json({success: false, error: 'Resourse not found'});
+    }
+    return response.json({success: true, data: idea});
+  } catch (error) {
+    return errorHandler(response, error);
   }
-
-  return response.json({success: true, data: idea});
 });
 
 
 
 // Add an idea
-router.post('/', function(request, response) {
-  const idea = {
-    id: ideas.length + 1,
+router.post('/', async function(request, response) {
+  const idea = new Idea({
     text: request.body.text,
     tag: request.body.tag,
     username: request.body.username,
-    date: new Date().toISOString().slice(0, 10),
-  };
+  });
 
-  ideas.push(idea);
-
-  response.json({success: true, data: idea});
+  try {
+    const savedIdea = await idea.save();
+    return response.json({success: true, data: idea});
+  } catch (error) {
+    return errorHandler(response, error);
+  }
 });
 
 
 
 // update an idea
-router.put('/:id', function(request, response) {
-  const targetID = Number(request.params.id);
-  const idea = ideas.find((item) => item.id === targetID);
-
-  if (!idea) {
-    return response.status('400').json({success: false, error: 'Resourse with specified ID not found'});
+router.put('/:id', async function(request, response) {
+  try {
+    const updatedIdea = await Idea.findByIdAndUpdate(request.params.id, {
+        $set: {
+          text: request.body.text,
+          tag: request.body.tag,
+        }
+      },
+      {new: true}
+    );
+    return response.json({success: true, data: updatedIdea});
+  } catch (error) {
+    return errorHandler(response, error);
   }
-
-  idea.text = request.body.text || idea.text;
-  idea.tag = request.body.tag || idea.tag;
-  idea.date = new Date().toISOString().slice(0, 10);
-
-  return response.json({success: true, data: idea});
 });
 
 
 
 // delete an idea
-router.delete('/:id', function(request, response) {
-  const targetID = Number(request.params.id);
-  const idea = ideas.find((item) => item.id === targetID);
-
-  if (!idea) {
-    return response.status('400').json({success: false, error: 'Resourse with specified ID not found'});
+router.delete('/:id', async function(request, response) {
+  try {
+    await Idea.findByIdAndDelete(request.params.id);
+    return response.json({success: true});
+  } catch (error) {
+    return errorHandler(response, error);
   }
-
-  const index = ideas.indexOf(idea);
-  ideas.splice(index, 1);
-
-  return response.json({success: true});
 });
 
 
