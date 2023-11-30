@@ -8,6 +8,10 @@ class IdeasApi {
   getIdeas() {
     return axios.get(this.apiUrl);
   }
+
+  createIdea(data) {
+    return axios.post(this.apiUrl, data);
+  }
 }
 
 module.exports = new IdeasApi();

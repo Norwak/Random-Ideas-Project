@@ -1,17 +1,28 @@
+const IdeasApi = require('../services/IdeasApi.js');
+
 class IdeaForm {
-  constructor() {
+  constructor(ideaList) {
     this.formModal = document.getElementById('form-modal');
     this.form = null;
+    this.ideaList = ideaList;
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
 
-    const idea = {
-      text: this.form.elements.text.value,
-      tag: this.form.elements.tag.value,
-      username: this.form.elements.username.value,
-    }
+    // TODO: user authentication
+
+    const text = this.form.elements.text.value;
+    const tag = this.form.elements.tag.value;
+    const username = this.form.elements.username.value;
+
+    const idea = {text, tag, username}
+
+    // Add idea to database
+    const newIdea = await IdeasApi.createIdea(idea);
+
+    // Add idea to list
+    this.ideaList.addIdeaToList(newIdea.data.data);
 
     // Clear fields
     this.form.elements.text.value = '';

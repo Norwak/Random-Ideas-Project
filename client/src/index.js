@@ -5,7 +5,7 @@ const Modal = require('./components/Modal.js');
 const IdeaForm = require('./components/IdeaForm.js');
 const IdeaList = require('./components/IdeaList.js');
 
-const modal = new Modal();
-const ideaForm = new IdeaForm();
-ideaForm.render();
+new Modal();
 const ideaList = new IdeaList();
+const ideaForm = new IdeaForm(ideaList);
+ideaForm.render();
