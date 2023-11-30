@@ -16,6 +16,14 @@ class IdeaForm {
     const tag = this.form.elements.tag.value;
     const username = this.form.elements.username.value;
 
+    if (!text || !tag || !username) {
+      alert('Please enter all fields');
+      return;
+    }
+
+    // save user to localstorage
+    localStorage.setItem('username', username);
+
     const idea = {text, tag, username}
 
     // Add idea to database
@@ -36,11 +44,12 @@ class IdeaForm {
   }
 
   render() {
+    const username = localStorage.getItem('username');
     this.formModal.innerHTML = `
     <form id="idea-form">
       <div class="form-control">
         <label for="idea-text">Enter a Username</label>
-        <input type="text" name="username" id="username" />
+        <input type="text" name="username" id="username" value="${username ? username : ''}" />
       </div>
       <div class="form-control">
         <label for="idea-text">What's Your Idea?</label>

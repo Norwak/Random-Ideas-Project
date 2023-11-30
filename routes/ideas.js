@@ -58,6 +58,13 @@ router.post('/', async function(request, response) {
 // update an idea
 router.put('/:id', async function(request, response) {
   try {
+    const idea = await Idea.findById(request.params.id);
+
+    // TODO: Authetication
+    if (idea.username !== request.body.username) {
+      return response.status(403).json({success: false, error: 'You are not authorized to delete this resource'});;
+    }
+
     const updatedIdea = await Idea.findByIdAndUpdate(request.params.id, {
         $set: {
           text: request.body.text,
@@ -77,6 +84,13 @@ router.put('/:id', async function(request, response) {
 // delete an idea
 router.delete('/:id', async function(request, response) {
   try {
+    const idea = await Idea.findById(request.params.id);
+
+    // TODO: Authetication
+    if (idea.username !== request.body.username) {
+      return response.status(403).json({success: false, error: 'You are not authorized to delete this resource'});;
+    }
+
     await Idea.findByIdAndDelete(request.params.id);
     return response.json({success: true});
   } catch (error) {

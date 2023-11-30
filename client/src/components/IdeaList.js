@@ -15,6 +15,26 @@ class IdeaList {
     this.validTags.add('inventions');
   }
 
+  async deleteIdea(e) {
+    const ideaID = e.currentTarget.parentElement.dataset.id;
+    if (!ideaID) {
+      alert('Something went wrong, please refresh the page.');
+      return;
+    }
+
+    try {
+      const response = await IdeasApi.deleteIdea(ideaID);
+
+      this.ideas = this.ideas.filter((idea) => idea._id !== ideaID);
+
+      const ideaEl = this.ideaListEl.querySelector(`.card[data-id="${ideaID}"]`);
+      if (ideaEl !== null) ideaEl.remove();
+    } catch (error) {
+      console.log(error);
+      alert('You cannot delete this resource');
+    }
+  }
+
   async getIdeas() {
     try {
       const response = await IdeasApi.getIdeas();
@@ -29,6 +49,11 @@ class IdeaList {
     this.ideas.push(idea);
     const ideaHTML = this.generateIdeaHTML(idea);
     this.ideaListEl.insertAdjacentHTML('beforeend', ideaHTML);
+
+    const button = this.ideaListEl.querySelector('.card:last-child button.delete');
+    if (button !== null) {
+      button.addEventListener('click', this.deleteIdea.bind(this));
+    }
   }
 
   getTagClass(tag) {
@@ -42,9 +67,13 @@ class IdeaList {
 
   generateIdeaHTML(idea) {
     const tagClass = this.getTagClass(idea.tag);
+    let deleteButton = '';
+    if (idea.username === localStorage.getItem('username')) {
+      deleteButton = '<button class="delete"><i class="fas fa-times"></i></button>';
+    }
     return `
-    <div class="card">
-      <button class="delete"><i class="fas fa-times"></i></button>
+    <div class="card" data-id="${idea._id}">
+      ${deleteButton}
       <h3>
         ${idea.text}
       </h3>
@@ -59,6 +88,13 @@ class IdeaList {
 
   render() {
     this.ideaListEl.innerHTML = this.ideas.map((idea) => this.generateIdeaHTML(idea)).join('');
+
+    for (const idea of this.ideaListEl.children) {
+      const button = idea.querySelector('button.delete');
+      if (button !== null) {
+        button.addEventListener('click', this.deleteIdea.bind(this));
+      }
+    }
   }
 }
 
