@@ -17,7 +17,7 @@ header {
   position: relative;
 }
 
-#modal-btn {
+.modal-btn[data-name="add-idea"] {
   border: none;
   background: none;
   color: green;
@@ -120,6 +120,10 @@ form label {
   padding: 20px 15px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.ideas .card.edit-controls h3 {
+  padding-right: 35px;
 }
 
 .ideas .card h3 {

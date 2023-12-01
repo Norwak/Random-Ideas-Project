@@ -1,14 +1,14 @@
 class Modal {
-  constructor() {
-    this.modal = document.getElementById('modal');
-    this.modalButton = document.getElementById('modal-btn');
-    this.addEventListeners();
-  }
+  constructor(name) {
+    this.modalName = name;
+    this.modal = document.querySelector(`.modal[data-name="${name}"]`);
+    this.modalButton = document.querySelectorAll(`.modal-btn[data-name="${name}"]`);
+    if (this.modal === null) {
+      console.error(`Error: Modal "${name}" wasn't found`);
+      return;
+    }
 
-  addEventListeners() {
-    this.modalButton.addEventListener('click', this.open.bind(this));
-    window.addEventListener('click', this.outsideClick.bind(this));
-    document.addEventListener('closemodal', () => this.close());
+    this.addEventListeners();
   }
 
   open() {
@@ -18,11 +18,19 @@ class Modal {
   close() {
     this.modal.style.display = 'none';
   }
-  
+
   outsideClick(e) {
-    if (e.target === this.modal) {
+    if (e.target === e.currentTarget) {
       this.close();
     }
+  }
+
+  addEventListeners() {
+    for (const button of this.modalButton) {
+      button.addEventListener('click', this.open.bind(this));
+    }
+    this.modal.addEventListener('click', this.outsideClick.bind(this));
+    document.addEventListener('closemodal', this.close.bind(this));
   }
 }
 

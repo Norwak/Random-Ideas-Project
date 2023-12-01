@@ -7,21 +7,44 @@
     <title>Random Ideas</title>
   </head>
   <body>
+
     <header>
       <h1>Random Ideas</h1>
-      <button id="modal-btn">
-        <i class="fa-solid fa-plus fa-2x"></i>
+      <button class="modal-btn" data-name="add-idea" aria-label="Open form to add an idea">
+        <i class="fa-solid fa-plus fa-2x" aria-hidden="true"></i>
       </button>
     </header>
+
     <div class="container">
       <div id="idea-list" class="ideas">
       </div>
     </div>
 
-    <div id="modal" class="modal">
-      <div id="form-modal" class="modal-box">
+    <div class="modal" data-name="add-idea">
+      <div class="modal-box">
+        <form id="add-idea-form">
+          <div class="form-control">
+            <label for="idea-text">Enter a Username</label>
+            <input type="text" name="username" id="username" />
+          </div>
+          <div class="form-control">
+            <label for="idea-text">What's Your Idea?</label>
+            <textarea name="text" id="idea-text"></textarea>
+          </div>
+          <div class="form-control">
+            <label for="tag">Tag</label>
+            <input type="text" name="tag" id="tag" />
+          </div>
+          <button class="btn" type="submit" id="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" data-name="edit-idea">
+      <div class="modal-box">
         
       </div>
     </div>
+
   </body>
 </html>

@@ -74,7 +74,7 @@ class IdeaList {
     }
     const formattedDate = format(new Date(idea.date), 'dd.MM.yyyy');
     return `
-    <article class="card" data-id="${idea._id}">
+    <article class="card${actions ? ' edit-controls' : ''}" data-id="${idea._id}">
       ${actions}
       <h3>
         ${idea.text}

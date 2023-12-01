@@ -2,9 +2,25 @@ const IdeasApi = require('../services/IdeasApi.js');
 
 class IdeaForm {
   constructor(ideaList) {
-    this.formModal = document.getElementById('form-modal');
-    this.form = null;
+    this.form = document.getElementById('add-idea-form');
+    if (this.form === null) {
+      console.error(`Error: Form "add-idea-form" wasn't found`);
+      return;
+    }
+
     this.ideaList = ideaList;
+    this.loadUsername();
+    this.addEventListeners();
+  }
+
+  loadUsername() {
+    const usernameField = this.form.querySelector('input[name="username"]');
+    if (usernameField === null) return;
+
+    let username = localStorage.getItem('username');
+    username = username ? username : '';
+
+    usernameField.value = username;
   }
 
   async handleSubmit(e) {
@@ -41,29 +57,6 @@ class IdeaForm {
 
   addEventListeners() {
     this.form.addEventListener('submit', this.handleSubmit.bind(this));
-  }
-
-  render() {
-    const username = localStorage.getItem('username');
-    this.formModal.innerHTML = `
-    <form id="idea-form">
-      <div class="form-control">
-        <label for="idea-text">Enter a Username</label>
-        <input type="text" name="username" id="username" value="${username ? username : ''}" />
-      </div>
-      <div class="form-control">
-        <label for="idea-text">What's Your Idea?</label>
-        <textarea name="text" id="idea-text"></textarea>
-      </div>
-      <div class="form-control">
-        <label for="tag">Tag</label>
-        <input type="text" name="tag" id="tag" />
-      </div>
-      <button class="btn" type="submit" id="submit">Submit</button>
-    </form>
-    `;
-    this.form = document.getElementById('idea-form');
-    this.addEventListeners();
   }
 }
 
