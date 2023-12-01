@@ -1,5 +1,7 @@
 const IdeasApi = require('../services/IdeasApi.js');
+const Toast = require('./Toast.js');
 const {format} = require('date-fns');
+const Spinner = require('../img/spinner.gif');
 
 class IdeaList {
   constructor() {
@@ -16,23 +18,43 @@ class IdeaList {
     this.validTags.add('inventions');
   }
 
+  showSpinner(card) {
+    const spinnerEl = card.querySelector('.spinner');
+    if (spinnerEl === null) return;
+    spinnerEl.classList.add('active');
+  }
+
+  hideSpinner(card) {
+    const spinnerEl = card.querySelector('.spinner');
+    if (spinnerEl === null) return;
+    spinnerEl.classList.remove('active');
+  }
+
   async deleteIdea(e) {
     const ideaID = e.currentTarget.parentElement.dataset.id;
     if (!ideaID) {
-      alert('Something went wrong, please refresh the page.');
+      Toast.errorToast('Something went wrong, please refresh the page.');
       return;
     }
 
     try {
+      const ideaEl = this.ideaListEl.querySelector(`.card[data-id="${ideaID}"]`);
+      if (ideaEl === null) {
+        Toast.errorToast('Something went wrong, please refresh the page.');
+        return;
+      }
+
+      this.showSpinner(ideaEl);
+
       const response = await IdeasApi.deleteIdea(ideaID);
 
       this.ideas = this.ideas.filter((idea) => idea._id !== ideaID);
 
-      const ideaEl = this.ideaListEl.querySelector(`.card[data-id="${ideaID}"]`);
-      if (ideaEl !== null) ideaEl.remove();
+      ideaEl.remove();
+      Toast.successToast('Idea deleted');
     } catch (error) {
       console.log(error);
-      alert('You cannot delete this resource');
+      Toast.errorToast('You cannot delete this idea');
     }
   }
 
@@ -40,7 +62,7 @@ class IdeaList {
     try {
       const response = await IdeasApi.getIdeas();
       this.ideas = response.data.data;
-      this.render();
+      this.init();
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +92,7 @@ class IdeaList {
     const tagClass = this.getTagClass(idea.tag);
     let actions = '';
     if (idea.username === localStorage.getItem('username')) {
-      actions = '<button class="edit" aria-label="Edit idea"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="delete" aria-label="Delete idea"><i class="fas fa-times" aria-hidden="true"></i></button>';
+      actions = `<button class="edit" aria-label="Edit idea"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="delete" aria-label="Delete idea"><i class="fas fa-times" aria-hidden="true"></i></button><img src="${Spinner}" class="spinner">`;
     }
     const formattedDate = format(new Date(idea.date), 'dd.MM.yyyy');
     return `
@@ -88,7 +110,7 @@ class IdeaList {
     `;
   }
 
-  render() {
+  init() {
     this.ideaListEl.innerHTML = this.ideas.map((idea) => this.generateIdeaHTML(idea)).join('');
 
     for (const idea of this.ideaListEl.children) {

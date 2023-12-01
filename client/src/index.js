@@ -1,4 +1,5 @@
 import '@fortawesome/fontawesome-free/css/all.css'
+import "toastify-js/src/toastify.css"
 import './css/style.css';
 
 const Modal = require('./components/Modal.js');

@@ -28,7 +28,6 @@ header {
 }
 
 .modal {
-  display: none;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -37,7 +36,14 @@ header {
   width: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s;
   cursor: pointer;
+}
+.modal.active {
+  visibility: visible;
+  opacity: 1;
 }
 
 .modal-box {
@@ -200,6 +206,18 @@ form label {
 .date {
   color: #999;
   font-size: 14px;
+}
+
+.spinner {
+  display: none;
+  position: absolute;
+  top: 70px;
+  right: 15px;
+  width: 18px;
+}
+
+.spinner.active {
+  display: block;
 }
 
 @media (max-width: 768px) {

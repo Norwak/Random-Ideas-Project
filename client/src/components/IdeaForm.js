@@ -1,4 +1,5 @@
 const IdeasApi = require('../services/IdeasApi.js');
+const Toast = require('./Toast.js');
 
 class IdeaForm {
   constructor(ideaList) {
@@ -33,7 +34,7 @@ class IdeaForm {
     const username = this.form.elements.username.value;
 
     if (!text || !tag || !username) {
-      alert('Please enter all fields');
+      Toast.warningToast('Please enter all the fields');
       return;
     }
 
@@ -45,6 +46,11 @@ class IdeaForm {
     // Add idea to database
     const newIdea = await IdeasApi.createIdea(idea);
 
+    if (newIdea.data.success === false) {
+      Toast.errorToast('Something went wrong, please refresh the page');
+      return;
+    };
+
     // Add idea to list
     this.ideaList.addIdeaToList(newIdea.data.data);
 
@@ -53,6 +59,8 @@ class IdeaForm {
     this.form.elements.tag.value = '';
 
     document.dispatchEvent(new Event('closemodal'));
+
+    Toast.successToast('Idea added');
   }
 
   addEventListeners() {
