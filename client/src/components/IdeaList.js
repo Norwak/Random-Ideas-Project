@@ -68,23 +68,23 @@ class IdeaList {
 
   generateIdeaHTML(idea) {
     const tagClass = this.getTagClass(idea.tag);
-    let deleteButton = '';
+    let actions = '';
     if (idea.username === localStorage.getItem('username')) {
-      deleteButton = '<button class="delete"><i class="fas fa-times"></i></button>';
+      actions = '<button class="edit" aria-label="Edit idea"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="delete" aria-label="Delete idea"><i class="fas fa-times" aria-hidden="true"></i></button>';
     }
     const formattedDate = format(new Date(idea.date), 'dd.MM.yyyy');
     return `
-    <div class="card" data-id="${idea._id}">
-      ${deleteButton}
+    <article class="card" data-id="${idea._id}">
+      ${actions}
       <h3>
         ${idea.text}
       </h3>
       <p class="tag ${tagClass}">${idea.tag.toUpperCase()}</p>
-      <p>
+      <footer class="card-footer">
         Posted on <span class="date">${formattedDate}</span> by
         <span class="author">${idea.username}</span>
-      </p>
-    </div>
+      </footer>
+    </article>
     `;
   }
 
