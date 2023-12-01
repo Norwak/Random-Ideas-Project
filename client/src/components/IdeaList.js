@@ -1,4 +1,5 @@
 const IdeasApi = require('../services/IdeasApi.js');
+const {format} = require('date-fns');
 
 class IdeaList {
   constructor() {
@@ -71,6 +72,7 @@ class IdeaList {
     if (idea.username === localStorage.getItem('username')) {
       deleteButton = '<button class="delete"><i class="fas fa-times"></i></button>';
     }
+    const formattedDate = format(new Date(idea.date), 'dd.MM.yyyy');
     return `
     <div class="card" data-id="${idea._id}">
       ${deleteButton}
@@ -79,7 +81,7 @@ class IdeaList {
       </h3>
       <p class="tag ${tagClass}">${idea.tag.toUpperCase()}</p>
       <p>
-        Posted on <span class="date">${idea.date}</span> by
+        Posted on <span class="date">${formattedDate}</span> by
         <span class="author">${idea.username}</span>
       </p>
     </div>
