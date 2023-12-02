@@ -2,11 +2,12 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import "toastify-js/src/toastify.css"
 import './css/style.css';
 
-const Modal = require('./components/Modal.js');
-const IdeaForm = require('./components/IdeaForm.js');
 const IdeaList = require('./components/IdeaList.js');
+const AddForm = require('./components/AddForm.js');
+const EditForm = require('./components/EditForm.js');
+const Modal = require('./components/Modal.js');
 
-new Modal('add-idea');
-new Modal('edit-idea');
 const ideaList = new IdeaList();
-new IdeaForm(ideaList);
+new AddForm(ideaList);
+new EditForm(ideaList);
+new Modal('add-idea');

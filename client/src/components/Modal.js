@@ -8,11 +8,24 @@ class Modal {
       return;
     }
 
-    this.addEventListeners();
+    if (name !== 'edit-idea') {
+      this.addEventListeners();
+    }
   }
 
-  open() {
+  open(e) {
     this.modal.classList.add('active');
+
+    if (this.modalName === 'edit-idea') {
+      const card = e.currentTarget.parentElement;
+      const text = card.querySelector('h3');
+      const tag = card.querySelector('.tag');
+      const ideaID = card.dataset.id;
+
+      this.modal.querySelector('input[name="id"]').value = ideaID;
+      this.modal.querySelector('textarea[name="text"]').value = text.innerHTML.trim();
+      this.modal.querySelector('input[name="tag"]').value = tag.innerHTML.trim();
+    }
   }
   
   close() {
@@ -31,6 +44,12 @@ class Modal {
     }
     this.modal.addEventListener('click', this.outsideClick.bind(this));
     document.addEventListener('closemodal', this.close.bind(this));
+  }
+
+  newItemEvents(list) {
+    const newItemButton = list.querySelector(`.card:last-child .modal-btn[data-name="${this.modalName}"]`);
+
+    newItemButton.addEventListener('click', this.open.bind(this));
   }
 }
 

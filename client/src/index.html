@@ -42,7 +42,18 @@
 
     <div class="modal" data-name="edit-idea">
       <div class="modal-box">
-        
+        <form id="edit-idea-form">
+          <input type="hidden" name="id">
+          <div class="form-control">
+            <label for="edit-idea-text">Edit Idea</label>
+            <textarea name="text" id="edit-idea-text"></textarea>
+          </div>
+          <div class="form-control">
+            <label for="edit-tag">Tag</label>
+            <input type="text" name="tag" id="edit-tag" />
+          </div>
+          <button class="btn" type="submit" id="submit">Submit</button>
+        </form>
       </div>
     </div>
 

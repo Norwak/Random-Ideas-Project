@@ -1,10 +1,12 @@
 const IdeasApi = require('../services/IdeasApi.js');
+const Modal = require('./Modal.js');
 const Toast = require('./Toast.js');
 const {format} = require('date-fns');
 const Spinner = require('../img/spinner.gif');
 
 class IdeaList {
   constructor() {
+    this.editModal = null;
     this.ideaListEl = document.getElementById('idea-list');
     this.ideas = new Array();
     this.getIdeas();
@@ -61,10 +63,13 @@ class IdeaList {
   async getIdeas() {
     try {
       const response = await IdeasApi.getIdeas();
-      this.ideas = response.data.data;
-      this.init();
+      if (response.data.success === true) {
+        this.ideas = response.data.data;
+        this.init();
+      }
     } catch (error) {
-      console.log(error);
+      this.ideaListEl.innerHTML = "<h2>Something's wrong with server connection</h2>";
+      // console.log(error);
     }
   }
 
@@ -76,7 +81,19 @@ class IdeaList {
     const button = this.ideaListEl.querySelector('.card:last-child button.delete');
     if (button !== null) {
       button.addEventListener('click', this.deleteIdea.bind(this));
+      this.editModal.newItemEvents(this.ideaListEl);
     }
+  }
+
+  updateIdeaInList(idea) {
+    const ideaIndex = this.ideas.findIndex((item) => item._id === idea._id);
+    this.ideas[ideaIndex].text = idea.text;
+    this.ideas[ideaIndex].tag = idea.tag;
+
+    const card = document.querySelector(`.card[data-id="${idea._id}"]`);
+    card.querySelector('h3').textContent = idea.text;
+    card.querySelector('.tag').classList = 'tag ' + this.getTagClass(idea.tag);
+    card.querySelector('.tag').textContent = idea.tag;
   }
 
   getTagClass(tag) {
@@ -92,7 +109,7 @@ class IdeaList {
     const tagClass = this.getTagClass(idea.tag);
     let actions = '';
     if (idea.username === localStorage.getItem('username')) {
-      actions = `<button class="edit" aria-label="Edit idea"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="delete" aria-label="Delete idea"><i class="fas fa-times" aria-hidden="true"></i></button><img src="${Spinner}" class="spinner">`;
+      actions = `<button class="edit modal-btn" data-name="edit-idea" aria-label="Edit idea"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="delete" aria-label="Delete idea"><i class="fas fa-times" aria-hidden="true"></i></button><img src="${Spinner}" class="spinner">`;
     }
     const formattedDate = format(new Date(idea.date), 'dd.MM.yyyy');
     return `
@@ -119,6 +136,8 @@ class IdeaList {
         button.addEventListener('click', this.deleteIdea.bind(this));
       }
     }
+    this.editModal = new Modal('edit-idea');
+    this.editModal.addEventListeners();
   }
 }
 

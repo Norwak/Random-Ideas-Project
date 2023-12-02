@@ -1,27 +1,21 @@
 const IdeasApi = require('../services/IdeasApi.js');
 const Toast = require('./Toast.js');
 
-class IdeaForm {
+class EditForm {
   constructor(ideaList) {
-    this.form = document.getElementById('add-idea-form');
+    this.form = document.getElementById('edit-idea-form');
     if (this.form === null) {
-      console.error(`Error: Form "add-idea-form" wasn't found`);
+      console.error(`Error: Form "edit-idea-form" wasn't found`);
       return;
     }
 
     this.ideaList = ideaList;
-    this.loadUsername();
     this.addEventListeners();
   }
 
   loadUsername() {
-    const usernameField = this.form.querySelector('input[name="username"]');
-    if (usernameField === null) return;
-
     let username = localStorage.getItem('username');
-    username = username ? username : '';
-
-    usernameField.value = username;
+    return username ? username : '';
   }
 
   async handleSubmit(e) {
@@ -29,30 +23,33 @@ class IdeaForm {
 
     // TODO: user authentication
 
+    const id = this.form.elements.id.value;
     const text = this.form.elements.text.value;
     const tag = this.form.elements.tag.value;
-    const username = this.form.elements.username.value;
+    const username = this.loadUsername();
 
-    if (!text || !tag || !username) {
+    if (!username) {
+      Toast.errorToast('Error! Please reload the page');
+      return;
+    }
+
+    if (!text || !tag) {
       Toast.warningToast('Please enter all the fields');
       return;
     }
 
-    // save user to localstorage
-    localStorage.setItem('username', username);
-
     const idea = {text, tag, username}
 
     // Add idea to database
-    const newIdea = await IdeasApi.createIdea(idea);
+    const newIdea = await IdeasApi.updateIdea(id, idea);
 
     if (newIdea.data.success === false) {
       Toast.errorToast('Something went wrong, please refresh the page');
       return;
     };
 
-    // Add idea to list
-    this.ideaList.addIdeaToList(newIdea.data.data);
+    // Update idea in frontend
+    this.ideaList.updateIdeaInList(newIdea.data.data);
 
     // Clear fields
     this.form.elements.text.value = '';
@@ -60,7 +57,7 @@ class IdeaForm {
 
     document.dispatchEvent(new Event('closemodal'));
 
-    Toast.successToast('Idea added');
+    Toast.successToast('Idea updated');
   }
 
   addEventListeners() {
@@ -68,4 +65,4 @@ class IdeaForm {
   }
 }
 
-module.exports = IdeaForm;
+module.exports = EditForm;
